@@ -479,14 +479,10 @@ export function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         cartCount={cartCount}
-        wishlistCount={wishlistIds.length}
         onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => setIsWishlistOpen(true)}
         onOpenSideNav={() => setIsSideNavOpen(true)}
         cartSubtotal={cartSubtotal}
         theme={theme}
-        onToggleTheme={handleToggleTheme}
-        onOpenInstallPwa={() => setIsInstallModalOpen(true)}
         activeView={activeView}
         onSwitchView={setActiveView}
         activeCampaigns={activeCampaigns}

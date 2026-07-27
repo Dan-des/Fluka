@@ -16,14 +16,10 @@ interface HeaderProps {
   selectedCategory: ProductCategory;
   onSelectCategory: (category: ProductCategory) => void;
   cartCount: number;
-  wishlistCount: number;
   onOpenCart: () => void;
-  onOpenWishlist: () => void;
   onOpenSideNav: () => void;
   cartSubtotal: number;
   theme: ThemeMode;
-  onToggleTheme: () => void;
-  onOpenInstallPwa: () => void;
   activeView: 'store' | 'vendor' | 'admin';
   onSwitchView: (view: 'store' | 'vendor' | 'admin') => void;
   activeCampaigns?: DiscountCampaign[];
@@ -35,14 +31,10 @@ export const Header: React.FC<HeaderProps> = memo(({
   selectedCategory,
   onSelectCategory,
   cartCount,
-  wishlistCount,
   onOpenCart,
-  onOpenWishlist,
   onOpenSideNav,
   cartSubtotal,
   theme,
-  onToggleTheme,
-  onOpenInstallPwa,
   activeView,
   onSwitchView,
   activeCampaigns = [],

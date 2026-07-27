@@ -50,7 +50,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
           }`}
           title="Click to view Best Offer deal"
         >
-          <div className="p-1.5 rounded-full bg-gradient-to-tr from-amber-500 to-rose-600 text-white shadow-md">
+          <div className="p-1.5 rounded-full bg-linear-to-tr from-amber-500 to-rose-600 text-white shadow-md">
             <Flame className="w-4 h-4 fill-white animate-bounce" />
           </div>
           <span className="text-xs font-black font-mono tracking-wider uppercase pr-1 text-amber-400">
@@ -78,7 +78,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
           <div
             key={timerKey}
             onAnimationEnd={() => setIsMinimized(true)}
-            className="h-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 animate-progress-line-gpu"
+            className="h-full bg-linear-to-r from-amber-500 via-rose-500 to-indigo-500 animate-progress-line-gpu"
           />
         </div>
 
@@ -98,7 +98,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
 
         {/* Header Badge */}
         <div className="flex items-center gap-2 pt-1">
-          <div className="p-1.5 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white shadow-md shadow-amber-500/20">
+          <div className="p-1.5 rounded-xl bg-linear-to-tr from-amber-500 to-rose-600 text-white shadow-md shadow-amber-500/20">
             <Flame className="w-4 h-4 fill-white animate-bounce" />
           </div>
           <div>
@@ -134,7 +134,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
             className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer ${
               isApplied
                 ? 'bg-emerald-600 text-white'
-                : 'bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white'
+                : 'bg-linear-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white'
             }`}
           >
             {isApplied ? (
