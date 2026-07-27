@@ -7,6 +7,8 @@ import {
   Check,
   Store,
   AlertTriangle,
+  Plus,
+  Minus,
 } from 'lucide-react';
 import type { Product, ThemeMode } from '../types/store';
 
@@ -16,6 +18,8 @@ interface ProductCardProps {
   onQuickView: (product: Product) => void;
   isWishlisted: boolean;
   onToggleWishlist: (product: Product) => void;
+  cartQuantity?: number;
+  onUpdateQuantity?: (productId: string, newQuantity: number) => void;
   theme?: ThemeMode;
 }
 
@@ -25,6 +29,8 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
   onQuickView,
   isWishlisted,
   onToggleWishlist,
+  cartQuantity = 0,
+  onUpdateQuantity,
   theme = 'dark',
 }) => {
   const [added, setAdded] = useState(false);
@@ -34,7 +40,21 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
     e.stopPropagation();
     onAddToCart(product);
     setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onUpdateQuantity) {
+      onUpdateQuantity(product.id, cartQuantity + 1);
+    }
+  };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onUpdateQuantity) {
+      onUpdateQuantity(product.id, cartQuantity - 1);
+    }
   };
 
   const discountPercent = product.originalPrice && product.originalPrice > product.price
@@ -155,7 +175,7 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
           </p>
         </div>
 
-        {/* Price & Add to Cart Footer (Formatted with Naira ₦) */}
+        {/* Price & Add to Cart / Inline Quantity Selector Footer */}
         <div className={`pt-2 border-t flex items-center justify-between gap-2 ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
           <div>
             <div className="flex items-baseline gap-1.5">
@@ -170,29 +190,64 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAdd}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-md ${
-              added
-                ? 'bg-emerald-600 text-white'
-                : isDark
-                ? 'bg-slate-800 hover:bg-cyan-600 text-slate-200 hover:text-white border border-slate-700/80 hover:border-cyan-500'
-                : 'bg-slate-100 hover:bg-cyan-600 text-slate-800 hover:text-white border border-slate-200 hover:border-cyan-500'
-            }`}
-          >
-            {added ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Added</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>Add</span>
-              </>
-            )}
-          </button>
+          {/* INLINE QUANTITY CONTROLLER IF IN CART, OR DEFAULT ADD BUTTON */}
+          {cartQuantity > 0 ? (
+            <div
+              className={`flex items-center rounded-xl p-0.5 border shadow-md ${
+                isDark ? 'bg-cyan-950/80 border-cyan-800/80 text-white' : 'bg-cyan-50 border-cyan-300 text-cyan-900'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={handleDecrement}
+                className={`p-1.5 rounded-lg transition cursor-pointer ${
+                  isDark ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-cyan-200 text-cyan-800'
+                }`}
+                title="Decrease quantity"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+
+              <span className="px-2 font-mono font-black text-xs min-w-[20px] text-center text-cyan-400">
+                {cartQuantity}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleIncrement}
+                className={`p-1.5 rounded-lg transition cursor-pointer ${
+                  isDark ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-cyan-200 text-cyan-800'
+                }`}
+                title="Increase quantity"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAdd}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-md cursor-pointer ${
+                added
+                  ? 'bg-emerald-600 text-white'
+                  : isDark
+                  ? 'bg-slate-800 hover:bg-cyan-600 text-slate-200 hover:text-white border border-slate-700/80 hover:border-cyan-500'
+                  : 'bg-slate-100 hover:bg-cyan-600 text-slate-800 hover:text-white border border-slate-200 hover:border-cyan-500'
+              }`}
+            >
+              {added ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Add</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, memo } from 'react';
 import { Flame, X, Tag, Check, ArrowRight, Sparkles } from 'lucide-react';
 import type { DiscountCampaign, ThemeMode } from '../types/store';
 
@@ -20,17 +20,6 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
   const [timerKey, setTimerKey] = useState(0);
 
   const isDark = theme === 'dark';
-
-  // 10-second progress timer auto-collapses to minimized floating badge
-  useEffect(() => {
-    if (isMinimized) return;
-
-    const timer = setTimeout(() => {
-      setIsMinimized(true);
-    }, 10000); // 10 seconds
-
-    return () => clearTimeout(timer);
-  }, [isMinimized, timerKey]);
 
   const handleClaimOffer = () => {
     onApplyCoupon(campaign.code);
@@ -84,11 +73,12 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
             : 'bg-white/95 border-amber-400 text-slate-900 shadow-xl'
         }`}
       >
-        {/* Ambient Top Glow Bar with 10s Timer */}
+        {/* Ambient Top Glow Bar with Pure GPU Compositor 10s Timer */}
         <div className="absolute top-0 inset-x-0 h-1.5 bg-slate-800/40 overflow-hidden">
           <div
             key={timerKey}
-            className="h-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 animate-progress-line"
+            onAnimationEnd={() => setIsMinimized(true)}
+            className="h-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 animate-progress-line-gpu"
           />
         </div>
 

@@ -582,17 +582,22 @@ export function App() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={handleAddToCart}
-                      onQuickView={handleQuickView}
-                      isWishlisted={wishlistIds.includes(product.id)}
-                      onToggleWishlist={handleToggleWishlist}
-                      theme={theme}
-                    />
-                  ))}
+                  {filteredProducts.map((product) => {
+                    const cartQty = cartItems.find((item) => item.product.id === product.id)?.quantity || 0;
+                    return (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        onAddToCart={handleAddToCart}
+                        onQuickView={handleQuickView}
+                        isWishlisted={wishlistIds.includes(product.id)}
+                        onToggleWishlist={handleToggleWishlist}
+                        cartQuantity={cartQty}
+                        onUpdateQuantity={handleUpdateCartQuantity}
+                        theme={theme}
+                      />
+                    );
+                  })}
                 </div>
               )}
             </div>
