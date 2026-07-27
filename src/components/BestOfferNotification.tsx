@@ -15,30 +15,31 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
 }) => {
   if (!campaign) return null;
 
-  const [isDismissed, setIsDismissed] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [timerKey, setTimerKey] = useState(0);
 
   const isDark = theme === 'dark';
 
-  // 20-second progress timer auto-collapses to minimized floating badge
+  // 10-second progress timer auto-collapses to minimized floating badge
   useEffect(() => {
-    if (isDismissed || isMinimized) return;
+    if (isMinimized) return;
 
     const timer = setTimeout(() => {
       setIsMinimized(true);
-    }, 20000);
+    }, 10000); // 10 seconds
 
     return () => clearTimeout(timer);
-  }, [isDismissed, isMinimized, timerKey]);
-
-  if (isDismissed) return null;
+  }, [isMinimized, timerKey]);
 
   const handleClaimOffer = () => {
     onApplyCoupon(campaign.code);
     setIsApplied(true);
     setTimeout(() => setIsApplied(false), 2000);
+  };
+
+  const handleMinimize = () => {
+    setIsMinimized(true);
   };
 
   const handleReExpand = () => {
@@ -82,7 +83,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
           100% { width: 0%; }
         }
         .animate-progress-line {
-          animation: timer-shrink 20s linear forwards;
+          animation: timer-shrink 10s linear forwards;
         }
       `}</style>
 
@@ -93,7 +94,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
             : 'bg-white/95 border-amber-400 text-slate-900 shadow-xl'
         }`}
       >
-        {/* Ambient Top Glow Bar */}
+        {/* Ambient Top Glow Bar with 10s Timer */}
         <div className="absolute top-0 inset-x-0 h-1.5 bg-slate-800/40 overflow-hidden">
           <div
             key={timerKey}
@@ -101,16 +102,16 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
           />
         </div>
 
-        {/* Close Button */}
+        {/* Minimize Button (X) */}
         <button
           type="button"
-          onClick={() => setIsDismissed(true)}
+          onClick={handleMinimize}
           className={`absolute top-4 right-3.5 p-1 rounded-full border transition ${
             isDark
               ? 'bg-slate-950/80 text-slate-400 border-slate-800 hover:text-white'
               : 'bg-slate-100 text-slate-500 border-slate-200 hover:text-slate-900'
           }`}
-          title="Dismiss notification"
+          title="Minimize notification"
         >
           <X className="w-3.5 h-3.5" />
         </button>
