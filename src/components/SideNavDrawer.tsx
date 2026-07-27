@@ -6,7 +6,6 @@ import {
   Moon,
   Download,
   Store,
-  ShieldCheck,
   ShoppingBag,
   ArrowRight,
   Sparkles,
@@ -50,8 +49,8 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
     };
   }, [isOpen]);
 
-  const handleNavigateView = (view: 'store' | 'vendor' | 'admin') => {
-    onSwitchView(view);
+  const handleGoToStore = () => {
+    onSwitchView('store');
     onClose();
   };
 
@@ -215,13 +214,13 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
             {/* Portals Section */}
             <div className="space-y-2 pt-2 border-t border-slate-800/60">
               <span className={`text-[10px] font-extrabold uppercase tracking-wider block px-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                Portals & Dashboards
+                Portals
               </span>
 
               {/* Customer Store */}
               <button
                 type="button"
-                onClick={() => handleNavigateView('store')}
+                onClick={() => handleGoToStore()}
                 className={`w-full p-3 rounded-2xl border flex items-center justify-between transition ${
                   activeView === 'store'
                     ? isDark ? 'bg-slate-900 border-cyan-500/50 text-cyan-400' : 'bg-slate-100 border-cyan-600 text-cyan-700'
@@ -233,23 +232,6 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                   <span className="text-xs font-bold">Customer Marketplace</span>
                 </div>
                 {activeView === 'store' && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping flex-shrink-0" />}
-              </button>
-
-              {/* Admin */}
-              <button
-                type="button"
-                onClick={() => handleNavigateView('admin')}
-                className={`w-full p-3 rounded-2xl border flex items-center justify-between transition ${
-                  activeView === 'admin'
-                    ? isDark ? 'bg-slate-900 border-indigo-500/50 text-indigo-400' : 'bg-slate-100 border-indigo-600 text-indigo-700'
-                    : isDark ? 'bg-slate-900/40 border-slate-800 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                  <span className="text-xs font-bold">Admin Dashboard</span>
-                </div>
-                {activeView === 'admin' && <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping flex-shrink-0" />}
               </button>
             </div>
           </div>
@@ -276,14 +258,15 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                 Sell your tech products & manage storefront inventory directly on Fluka.
               </p>
 
-              <button
-                type="button"
-                onClick={() => handleNavigateView('vendor')}
+              <a
+                href="https://flukavendor.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-violet-600 hover:from-cyan-400 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
               >
                 <span>Access Vendor Portal</span>
                 <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
