@@ -1,17 +1,15 @@
-import React, { memo } from 'react';
+import React, { useState, memo } from 'react';
 import {
   ShoppingBag,
   Search,
-  Heart,
   X,
   Sparkles,
-  Sun,
-  Moon,
-  Download,
   Tag,
+  Menu,
 } from 'lucide-react';
 import type { DiscountCampaign, ProductCategory, ThemeMode } from '../types/store';
 import { CATEGORIES } from '../data/products';
+import { SideNavDrawer } from './SideNavDrawer';
 
 interface HeaderProps {
   searchQuery: string;
@@ -48,6 +46,7 @@ export const Header: React.FC<HeaderProps> = memo(({
   onSwitchView,
   activeCampaigns = [],
 }) => {
+  const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const isDark = theme === 'dark';
 
   const handleNavigateHome = () => {
@@ -110,8 +109,8 @@ export const Header: React.FC<HeaderProps> = memo(({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
-        {/* Main Navbar Row */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-3">
+        {/* Main Decluttered Navbar Row */}
         <div className="flex items-center justify-between gap-4">
           {/* Logo Branding */}
           <div
@@ -176,69 +175,14 @@ export const Header: React.FC<HeaderProps> = memo(({
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {/* Install PWA App Download Button */}
-            <button
-              type="button"
-              onClick={onOpenInstallPwa}
-              className={`p-2.5 sm:px-3 sm:py-2 rounded-xl border transition flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${
-                isDark
-                  ? 'bg-cyan-950/60 hover:bg-cyan-900/80 border-cyan-800/80 text-cyan-300'
-                  : 'bg-cyan-50 hover:bg-cyan-100 border-cyan-300 text-cyan-800'
-              }`}
-              title="Install / Download Fluka Web App"
-            >
-              <Download className="w-4 h-4 text-cyan-500" />
-              <span className="hidden lg:inline">Install App</span>
-            </button>
-
-            {/* Theme Toggle Button */}
-            <button
-              type="button"
-              onClick={onToggleTheme}
-              className={`p-2.5 rounded-xl border transition flex items-center justify-center cursor-pointer ${
-                isDark
-                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-amber-400'
-                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
-              }`}
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4 text-amber-400 fill-amber-400/20" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-600 fill-indigo-600/20" />
-              )}
-            </button>
-
-            {/* Wishlist Button */}
-            {activeView === 'store' && (
-              <button
-                type="button"
-                onClick={onOpenWishlist}
-                className={`relative p-2.5 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
-                  isDark
-                    ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border-slate-800'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
-                }`}
-                title="Saved Wishlist"
-              >
-                <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20" />
-                <span className="text-xs font-semibold hidden sm:inline">Wishlist</span>
-                {wishlistCount > 0 && (
-                  <span className="h-5 min-w-[20px] px-1 bg-rose-600 text-white rounded-full text-[10px] font-bold flex items-center justify-center shadow-md">
-                    {wishlistCount}
-                  </span>
-                )}
-              </button>
-            )}
-
+          {/* Clean Action Buttons (Cart + Hamburger Side Nav Toggle) */}
+          <div className="flex items-center gap-2.5">
             {/* Cart Drawer Trigger with Naira (₦) */}
             {activeView === 'store' && (
               <button
                 type="button"
                 onClick={onOpenCart}
-                className="relative flex items-center gap-2.5 px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white rounded-xl font-medium text-xs shadow-lg shadow-cyan-500/20 transition active:scale-95 cursor-pointer"
+                className="relative flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white rounded-xl font-medium text-xs shadow-lg shadow-cyan-500/20 transition active:scale-95 cursor-pointer"
               >
                 <div className="relative">
                   <ShoppingBag className="w-4 h-4" />
@@ -256,6 +200,20 @@ export const Header: React.FC<HeaderProps> = memo(({
                 )}
               </button>
             )}
+
+            {/* Hamburger Side Navigation Menu Button */}
+            <button
+              type="button"
+              onClick={() => setIsSideNavOpen(true)}
+              className={`p-2.5 rounded-xl border transition flex items-center justify-center cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:text-white'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+              }`}
+              title="Open Navigation Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -312,6 +270,19 @@ export const Header: React.FC<HeaderProps> = memo(({
           </div>
         )}
       </div>
+
+      {/* Side Navigation Panel Drawer */}
+      <SideNavDrawer
+        isOpen={isSideNavOpen}
+        onClose={() => setIsSideNavOpen(false)}
+        wishlistCount={wishlistCount}
+        onOpenWishlist={onOpenWishlist}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        onOpenInstallPwa={onOpenInstallPwa}
+        activeView={activeView}
+        onSwitchView={onSwitchView}
+      />
     </header>
   );
 });

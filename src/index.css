@@ -48,6 +48,24 @@
   animation: timer-scaleX 10s linear forwards;
 }
 
+/* Subtle GPU-Accelerated Micro-Animations for Product Banners & Cards */
+@keyframes slide-fade-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-slide-fade {
+  animation: slide-fade-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
 /* GPU Acceleration & Performance Utilities */
 .gpu-accelerated {
   transform: translateZ(0);

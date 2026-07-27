@@ -18,7 +18,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopClick, theme = 'da
 
   return (
     <section
-      className={`relative overflow-hidden my-4 rounded-3xl mx-4 sm:mx-6 lg:mx-8 border transition-colors duration-300 ${
+      className={`relative overflow-hidden my-4 rounded-3xl mx-4 sm:mx-6 lg:mx-8 border transition-colors duration-300 animate-slide-fade transform-gpu ${
         isDark
           ? 'bg-slate-900/60 border-slate-800/80'
           : 'bg-white border-slate-200 shadow-sm'
