@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { memo } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import type { DiscountCampaign, ProductCategory, ThemeMode } from '../types/store';
 import { CATEGORIES } from '../data/products';
-import { SideNavDrawer } from './SideNavDrawer';
 
 interface HeaderProps {
   searchQuery: string;
@@ -27,6 +26,7 @@ interface HeaderProps {
   activeView: 'store' | 'vendor' | 'admin';
   onSwitchView: (view: 'store' | 'vendor' | 'admin') => void;
   activeCampaigns?: DiscountCampaign[];
+  onOpenSideNav: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = memo(({
@@ -35,18 +35,15 @@ export const Header: React.FC<HeaderProps> = memo(({
   selectedCategory,
   onSelectCategory,
   cartCount,
-  wishlistCount,
   onOpenCart,
-  onOpenWishlist,
   cartSubtotal,
   theme,
-  onToggleTheme,
   onOpenInstallPwa,
   activeView,
   onSwitchView,
   activeCampaigns = [],
+  onOpenSideNav,
 }) => {
-  const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const isDark = theme === 'dark';
 
   const handleNavigateHome = () => {
@@ -204,7 +201,7 @@ export const Header: React.FC<HeaderProps> = memo(({
             {/* Hamburger Side Navigation Menu Button */}
             <button
               type="button"
-              onClick={() => setIsSideNavOpen(true)}
+              onClick={onOpenSideNav}
               className={`p-2.5 rounded-xl border transition flex items-center justify-center cursor-pointer ${
                 isDark
                   ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:text-white'
@@ -270,19 +267,6 @@ export const Header: React.FC<HeaderProps> = memo(({
           </div>
         )}
       </div>
-
-      {/* Side Navigation Panel Drawer */}
-      <SideNavDrawer
-        isOpen={isSideNavOpen}
-        onClose={() => setIsSideNavOpen(false)}
-        wishlistCount={wishlistCount}
-        onOpenWishlist={onOpenWishlist}
-        theme={theme}
-        onToggleTheme={onToggleTheme}
-        onOpenInstallPwa={onOpenInstallPwa}
-        activeView={activeView}
-        onSwitchView={onSwitchView}
-      />
     </header>
   );
 });

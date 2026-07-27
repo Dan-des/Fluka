@@ -5,6 +5,7 @@ import { ProductCard } from './components/ProductCard';
 import { ProductQuickView } from './components/ProductQuickView';
 import { CartDrawer } from './components/CartDrawer';
 import { WishlistDrawer } from './components/WishlistDrawer';
+import { SideNavDrawer } from './components/SideNavDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { OrderSuccessModal } from './components/OrderSuccessModal';
 import { InstallPwaModal } from './components/InstallPwaModal';
@@ -331,10 +332,11 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('All');
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'rating'>('featured');
   
-  // Cart & Wishlist start clean from 0 for first-time visitors
+  // Cart, Wishlist & Side Navigation Drawer State
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -487,6 +489,7 @@ export function App() {
         activeView={activeView}
         onSwitchView={setActiveView}
         activeCampaigns={activeCampaigns}
+        onOpenSideNav={() => setIsSideNavOpen(true)}
       />
 
       {/* Main Container */}
@@ -686,6 +689,19 @@ export function App() {
         onRemoveItem={handleRemoveWishlistItem}
         onMoveToCart={handleMoveWishlistToCart}
         theme={theme}
+      />
+
+      {/* Global Root-Level Side Navigation Drawer (Unconstrained by Header Stacking Context) */}
+      <SideNavDrawer
+        isOpen={isSideNavOpen}
+        onClose={() => setIsSideNavOpen(false)}
+        wishlistCount={wishlistIds.length}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
+        onOpenInstallPwa={() => setIsInstallModalOpen(true)}
+        activeView={activeView}
+        onSwitchView={setActiveView}
       />
 
       {/* Multi-Step Checkout Modal */}
