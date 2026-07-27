@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import {
   X,
   Heart,
@@ -36,9 +36,19 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
   activeView,
   onSwitchView,
 }) => {
-  if (!isOpen) return null;
-
   const isDark = theme === 'dark';
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const handleNavigateView = (view: 'store' | 'vendor' | 'admin') => {
     onSwitchView(view);
@@ -56,31 +66,38 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-hidden animate-in fade-in duration-300">
-      {/* Rich Depth of Field Blur Backdrop Overlay */}
+    <>
+      {/* Full-screen fixed overlay container: always in DOM for transition */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity duration-300"
-        onClick={onClose}
-      />
-
-      {/* Slide-Over Right Drawer Panel */}
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        className={`fixed inset-0 z-[200] flex justify-end transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop — click to close */}
         <div
-          className={`w-screen max-w-xs sm:max-w-sm border-l shadow-2xl flex flex-col justify-between transition-transform duration-300 animate-in slide-in-from-right duration-300 ${
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        />
+
+        {/* Drawer panel — slides from right */}
+        <div
+          className={`relative w-full max-w-sm h-full flex flex-col shadow-2xl border-l transition-transform duration-300 ease-in-out ${
+            isOpen ? 'translate-x-0' : 'translate-x-full'
+          } ${
             isDark
               ? 'bg-slate-950 border-slate-800 text-slate-100'
               : 'bg-white border-slate-200 text-slate-900'
           }`}
         >
-          {/* Header */}
+          {/* ── Header ─────────────────────────────────────────────────── */}
           <div
-            className={`p-5 border-b flex items-center justify-between gap-4 ${
-              isDark ? 'border-slate-800/80 bg-slate-900/60' : 'border-slate-200 bg-slate-50'
+            className={`flex-shrink-0 flex items-center justify-between gap-4 px-5 py-4 border-b ${
+              isDark ? 'border-slate-800 bg-slate-900/60' : 'border-slate-200 bg-slate-50'
             }`}
           >
-            {/* Branding Logo */}
+            {/* Branding */}
             <div className="flex items-center gap-3 select-none">
-              <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-violet-500 p-0.5 shadow-md shadow-cyan-500/20">
+              <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-violet-500 p-0.5 shadow-md shadow-cyan-500/20 flex-shrink-0">
                 <div
                   className={`h-full w-full rounded-[14px] flex items-center justify-center ${
                     isDark ? 'bg-slate-950' : 'bg-white'
@@ -101,10 +118,11 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
               </div>
             </div>
 
+            {/* Close button */}
             <button
               type="button"
               onClick={onClose}
-              className={`p-2 rounded-xl border transition ${
+              className={`flex-shrink-0 p-2 rounded-xl border transition ${
                 isDark
                   ? 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border-slate-800'
                   : 'bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 border-slate-200'
@@ -114,15 +132,16 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
             </button>
           </div>
 
-          {/* Menu Options List */}
+          {/* ── Scrollable Content ──────────────────────────────────────── */}
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
-            {/* Secondary Controls Section */}
+
+            {/* Quick Actions */}
             <div className="space-y-2">
               <span className={`text-[10px] font-extrabold uppercase tracking-wider block px-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                 Quick Actions
               </span>
 
-              {/* Wishlist Button */}
+              {/* Wishlist */}
               <button
                 type="button"
                 onClick={handleWishlistClick}
@@ -133,8 +152,8 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500">
-                    <Heart className="w-4 h-4 fill-rose-500/20" />
+                  <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                    <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20" />
                   </div>
                   <span className="text-xs font-bold">Saved Wishlist</span>
                 </div>
@@ -143,13 +162,11 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                     {wishlistCount}
                   </span>
                 ) : (
-                  <span className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                    0 items
-                  </span>
+                  <span className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>0 items</span>
                 )}
               </button>
 
-              {/* Theme Switcher Toggle */}
+              {/* Theme Switcher */}
               <button
                 type="button"
                 onClick={onToggleTheme}
@@ -160,12 +177,11 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl border ${isDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600'}`}>
-                    {isDark ? (
-                      <Sun className="w-4 h-4 fill-amber-400/20" />
-                    ) : (
-                      <Moon className="w-4 h-4 fill-indigo-600/20" />
-                    )}
+                  <div className={`p-2 rounded-xl border ${isDark ? 'bg-amber-500/10 border-amber-500/20' : 'bg-indigo-500/10 border-indigo-500/20'}`}>
+                    {isDark
+                      ? <Sun className="w-4 h-4 text-amber-400 fill-amber-400/20" />
+                      : <Moon className="w-4 h-4 text-indigo-600 fill-indigo-600/20" />
+                    }
                   </div>
                   <span className="text-xs font-bold">
                     {isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -176,7 +192,7 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                 </span>
               </button>
 
-              {/* Install PWA App */}
+              {/* Install App */}
               <button
                 type="button"
                 onClick={handleInstallClick}
@@ -187,74 +203,75 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
-                    <Download className="w-4 h-4" />
+                  <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                    <Download className="w-4 h-4 text-cyan-400" />
                   </div>
                   <span className="text-xs font-bold">Install Fluka Web App</span>
                 </div>
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse flex-shrink-0" />
               </button>
             </div>
 
-            {/* Portal Views Section */}
-            <div className="space-y-2 pt-2 border-t border-slate-800">
+            {/* Portals Section */}
+            <div className="space-y-2 pt-2 border-t border-slate-800/60">
               <span className={`text-[10px] font-extrabold uppercase tracking-wider block px-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                 Portals & Dashboards
               </span>
 
-              {/* Customer Marketplace View */}
+              {/* Customer Store */}
               <button
                 type="button"
                 onClick={() => handleNavigateView('store')}
                 className={`w-full p-3 rounded-2xl border flex items-center justify-between transition ${
                   activeView === 'store'
-                    ? isDark ? 'bg-slate-900 border-cyan-500/50 text-cyan-400' : 'bg-slate-100 border-cyan-600 text-cyan-700 font-bold'
-                    : isDark ? 'bg-slate-900/40 border-slate-800/80 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    ? isDark ? 'bg-slate-900 border-cyan-500/50 text-cyan-400' : 'bg-slate-100 border-cyan-600 text-cyan-700'
+                    : isDark ? 'bg-slate-900/40 border-slate-800 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <ShoppingBag className="w-4 h-4 text-cyan-500" />
                   <span className="text-xs font-bold">Customer Marketplace</span>
                 </div>
-                {activeView === 'store' && (
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                )}
+                {activeView === 'store' && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping flex-shrink-0" />}
               </button>
 
-              {/* Admin Portal View */}
+              {/* Admin */}
               <button
                 type="button"
                 onClick={() => handleNavigateView('admin')}
                 className={`w-full p-3 rounded-2xl border flex items-center justify-between transition ${
                   activeView === 'admin'
-                    ? isDark ? 'bg-slate-900 border-indigo-500/50 text-indigo-400' : 'bg-slate-100 border-indigo-600 text-indigo-700 font-bold'
-                    : isDark ? 'bg-slate-900/40 border-slate-800/80 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    ? isDark ? 'bg-slate-900 border-indigo-500/50 text-indigo-400' : 'bg-slate-100 border-indigo-600 text-indigo-700'
+                    : isDark ? 'bg-slate-900/40 border-slate-800 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="w-4 h-4 text-indigo-400" />
                   <span className="text-xs font-bold">Admin Dashboard</span>
                 </div>
-                {activeView === 'admin' && (
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-                )}
+                {activeView === 'admin' && <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping flex-shrink-0" />}
               </button>
             </div>
           </div>
 
-          {/* Bottom Prominent Become a Vendor Banner CTA */}
-          <div className="p-5 border-t border-slate-800 space-y-3">
-            <div className={`p-4 rounded-2xl border shadow-xl space-y-3 relative overflow-hidden ${
-              isDark ? 'bg-gradient-to-br from-cyan-950/80 via-slate-900 to-indigo-950/80 border-cyan-800/60' : 'bg-gradient-to-br from-cyan-50 to-indigo-50 border-cyan-200'
-            }`}>
+          {/* ── Vendor Portal CTA — pinned to bottom inside panel ───────── */}
+          <div className={`flex-shrink-0 p-5 border-t ${isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-slate-50'}`}>
+            <div
+              className={`w-full relative z-10 p-4 rounded-2xl border space-y-3 overflow-hidden ${
+                isDark
+                  ? 'bg-gradient-to-br from-cyan-950/80 via-slate-900 to-indigo-950/80 border-cyan-800/60'
+                  : 'bg-gradient-to-br from-cyan-50 to-indigo-50 border-cyan-200'
+              }`}
+            >
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow">
+                <div className="p-1.5 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow flex-shrink-0">
                   <Store className="w-4 h-4" />
                 </div>
                 <span className="text-xs font-black tracking-wide text-cyan-400 uppercase font-mono">
-                  VENDOR PORTAL
+                  Vendor Portal
                 </span>
               </div>
+
               <p className={`text-[11px] leading-relaxed font-semibold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                 Sell your tech products & manage storefront inventory directly on Fluka.
               </p>
@@ -262,16 +279,16 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
               <button
                 type="button"
                 onClick={() => handleNavigateView('vendor')}
-                className="w-full py-2.5 px-3 bg-gradient-to-r from-cyan-500 via-indigo-600 to-violet-600 hover:from-cyan-400 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition cursor-pointer"
+                className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-violet-600 hover:from-cyan-400 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
               >
                 <span>Access Vendor Portal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 });
 
