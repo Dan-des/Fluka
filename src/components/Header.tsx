@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -31,7 +31,7 @@ interface HeaderProps {
   activeCampaigns?: DiscountCampaign[];
 }
 
-export const Header: React.FC<HeaderProps> = ({
+export const Header: React.FC<HeaderProps> = memo(({
   searchQuery,
   onSearchChange,
   selectedCategory,
@@ -77,21 +77,6 @@ export const Header: React.FC<HeaderProps> = ({
     >
       {/* Dynamic Marquee Scrolling Announcement Banner */}
       <div className="bg-gradient-to-r from-cyan-600 via-indigo-600 to-violet-600 text-white text-[11px] font-semibold py-2 overflow-hidden whitespace-nowrap relative select-none border-b border-cyan-400/20">
-        <style>{`
-          @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-marquee-track {
-            display: inline-flex;
-            width: max-content;
-            animation: marquee 24s linear infinite;
-          }
-          .animate-marquee-track:hover {
-            animation-play-state: paused;
-          }
-        `}</style>
-
         <div className="animate-marquee-track flex items-center gap-12">
           {/* Loop Set 1 */}
           <div className="flex items-center gap-10">
@@ -329,4 +314,6 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';

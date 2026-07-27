@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import {
   Star,
   ShoppingBag,
@@ -19,7 +19,7 @@ interface ProductCardProps {
   theme?: ThemeMode;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
+export const ProductCard: React.FC<ProductCardProps> = memo(({
   product,
   onAddToCart,
   onQuickView,
@@ -44,7 +44,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       onClick={() => onQuickView(product)}
-      className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer relative ${
+      className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer relative transform-gpu cv-auto ${
         product.isFlagged
           ? 'border-rose-500/80 ring-1 ring-rose-500/40'
           : isDark
@@ -57,7 +57,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform"
         />
 
         {/* Badges Overlay */}
@@ -195,4 +197,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
     </div>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';

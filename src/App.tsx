@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { HeroBanner } from './components/HeroBanner';
 import { ProductCard } from './components/ProductCard';
@@ -11,7 +11,6 @@ import { VendorDashboard } from './components/VendorDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginScreen } from './components/AdminLoginScreen';
 import { BestOfferNotification } from './components/BestOfferNotification';
-import { DevViewSwitcher } from './components/DevViewSwitcher';
 import { Footer } from './components/Footer';
 
 import type { Product, CartItem, ProductCategory, OrderState, ThemeMode, VendorStore, DiscountCampaign } from './types/store';
@@ -96,11 +95,11 @@ const getInitialPortalView = (): 'store' | 'vendor' | 'admin' => {
   const hostname = window.location.hostname.toLowerCase();
   const pathname = window.location.pathname.toLowerCase();
 
-  // Subdomain / Domain-based subrouting rules (Production/Deployment)
-  if (hostname.includes('vendor') || hostname.startsWith('vendor.')) {
+  // Pure domain-based routing detection
+  if (hostname.includes('vendor')) {
     return 'vendor';
   }
-  if (hostname.includes('admin') || hostname.startsWith('admin.')) {
+  if (hostname.includes('admin')) {
     return 'admin';
   }
 
@@ -120,15 +119,15 @@ export function App() {
     return localStorage.getItem('fluka_admin_auth') === 'true';
   });
 
-  const handleAdminLoginSuccess = () => {
+  const handleAdminLoginSuccess = useCallback(() => {
     setIsAdminAuthenticated(true);
     localStorage.setItem('fluka_admin_auth', 'true');
-  };
+  }, []);
 
-  const handleAdminLogout = () => {
+  const handleAdminLogout = useCallback(() => {
     setIsAdminAuthenticated(false);
     localStorage.removeItem('fluka_admin_auth');
-  };
+  }, []);
 
   // Listen for browser back / forward navigation and domain subrouting
   useEffect(() => {
@@ -160,11 +159,11 @@ export function App() {
     return campaignsList.find((c) => c.isBestOffer) || activeCampaigns[0] || campaignsList[0] || null;
   }, [campaignsList, activeCampaigns]);
 
-  const handleAddCampaign = (newCampaign: DiscountCampaign) => {
+  const handleAddCampaign = useCallback((newCampaign: DiscountCampaign) => {
     setCampaignsList((prev) => [newCampaign, ...prev]);
-  };
+  }, []);
 
-  const handleToggleActiveCampaign = (campaignId: string) => {
+  const handleToggleActiveCampaign = useCallback((campaignId: string) => {
     setCampaignsList((prev) => {
       const target = prev.find((c) => c.id === campaignId);
       if (!target) return prev;
@@ -177,20 +176,20 @@ export function App() {
       }
       return prev.map((c) => (c.id === campaignId ? { ...c, isActive: !c.isActive } : c));
     });
-  };
+  }, []);
 
-  const handleSetBestOfferCampaign = (campaignId: string) => {
+  const handleSetBestOfferCampaign = useCallback((campaignId: string) => {
     setCampaignsList((prev) =>
       prev.map((c) => ({
         ...c,
         isBestOffer: c.id === campaignId,
       }))
     );
-  };
+  }, []);
 
-  const handleRemoveCampaign = (campaignId: string) => {
+  const handleRemoveCampaign = useCallback((campaignId: string) => {
     setCampaignsList((prev) => prev.filter((c) => c.id !== campaignId));
-  };
+  }, []);
 
   // Registered Vendors State
   const [vendorsList, setVendorsList] = useState<VendorStore[]>(() => {
@@ -202,9 +201,9 @@ export function App() {
     localStorage.setItem('fluka_vendors_list', JSON.stringify(vendorsList));
   }, [vendorsList]);
 
-  const handleRegisterVendorStore = (newStore: VendorStore) => {
+  const handleRegisterVendorStore = useCallback((newStore: VendorStore) => {
     setVendorsList((prev) => [newStore, ...prev]);
-  };
+  }, []);
 
   // Dynamic Shared Product Catalog State
   const [productsList, setProductsList] = useState<Product[]>(() => {
@@ -224,49 +223,52 @@ export function App() {
   }, [productsList]);
 
   // Vendor Action Handlers (Admin Control)
-  const handleToggleVerifyVendor = (vendorId: string) => {
+  const handleToggleVerifyVendor = useCallback((vendorId: string) => {
     setVendorsList((prev) =>
       prev.map((v) => (v.id === vendorId ? { ...v, isVerified: !v.isVerified } : v))
     );
-  };
+  }, []);
 
-  const handleToggleFlagVendor = (vendorId: string) => {
+  const handleToggleFlagVendor = useCallback((vendorId: string) => {
     setVendorsList((prev) =>
       prev.map((v) => (v.id === vendorId ? { ...v, isFlagged: !v.isFlagged } : v))
     );
-  };
+  }, []);
 
-  const handleRemoveVendor = (vendorId: string) => {
-    const vendorToRemove = vendorsList.find((v) => v.id === vendorId);
-    if (!vendorToRemove) return;
-    if (confirm(`Deregister vendor "${vendorToRemove.storeName}" and remove all listed products?`)) {
-      setVendorsList((prev) => prev.filter((v) => v.id !== vendorId));
-      setProductsList((prev) =>
-        prev.filter((p) => p.vendorName?.toLowerCase() !== vendorToRemove.storeName.toLowerCase())
-      );
-    }
-  };
+  const handleRemoveVendor = useCallback((vendorId: string) => {
+    setVendorsList((prev) => {
+      const vendorToRemove = prev.find((v) => v.id === vendorId);
+      if (!vendorToRemove) return prev;
+      if (confirm(`Deregister vendor "${vendorToRemove.storeName}" and remove all listed products?`)) {
+        setProductsList((prods) =>
+          prods.filter((p) => p.vendorName?.toLowerCase() !== vendorToRemove.storeName.toLowerCase())
+        );
+        return prev.filter((v) => v.id !== vendorId);
+      }
+      return prev;
+    });
+  }, []);
 
   // Product Action Handlers (Admin Control)
-  const handleToggleFlagProduct = (productId: string) => {
+  const handleToggleFlagProduct = useCallback((productId: string) => {
     setProductsList((prev) =>
       prev.map((p) => (p.id === productId ? { ...p, isFlagged: !p.isFlagged } : p))
     );
-  };
+  }, []);
 
-  const handleAddVendorProduct = (newProduct: Product) => {
+  const handleAddVendorProduct = useCallback((newProduct: Product) => {
     setProductsList((prev) => [newProduct, ...prev]);
-  };
+  }, []);
 
-  const handleUpdateVendorProduct = (updatedProduct: Product) => {
+  const handleUpdateVendorProduct = useCallback((updatedProduct: Product) => {
     setProductsList((prev) =>
       prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
-  };
+  }, []);
 
-  const handleRemoveVendorProduct = (productId: string) => {
+  const handleRemoveVendorProduct = useCallback((productId: string) => {
     setProductsList((prev) => prev.filter((p) => p.id !== productId));
-  };
+  }, []);
 
   // Theme State
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -276,11 +278,13 @@ export function App() {
 
   const isDark = theme === 'dark';
 
-  const handleToggleTheme = () => {
-    const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('fluka_theme', nextTheme);
-  };
+  const handleToggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const nextTheme: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('fluka_theme', nextTheme);
+      return nextTheme;
+    });
+  }, []);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -306,7 +310,7 @@ export function App() {
     };
   }, []);
 
-  const handleInstallPwa = () => {
+  const handleInstallPwa = useCallback(() => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then((choiceResult: any) => {
@@ -319,7 +323,7 @@ export function App() {
     } else {
       setIsInstallModalOpen(true);
     }
-  };
+  }, [deferredPrompt]);
 
   // State Management
   const [searchQuery, setSearchQuery] = useState('');
@@ -365,8 +369,8 @@ export function App() {
     });
   }, [productsList, searchQuery, selectedCategory, sortBy]);
 
-  // Cart Operations
-  const handleAddToCart = (
+  // Cart Operations Memoized
+  const handleAddToCart = useCallback((
     product: Product,
     quantity: number = 1,
     selectedColor?: string
@@ -384,11 +388,11 @@ export function App() {
 
       return [...prev, { product, quantity, selectedColor }];
     });
-  };
+  }, []);
 
-  const handleUpdateCartQuantity = (productId: string, quantity: number) => {
+  const handleUpdateCartQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity <= 0) {
-      handleRemoveCartItem(productId);
+      setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
       return;
     }
 
@@ -397,43 +401,52 @@ export function App() {
         item.product.id === productId ? { ...item, quantity } : item
       )
     );
-  };
+  }, []);
 
-  const handleRemoveCartItem = (productId: string) => {
+  const handleRemoveCartItem = useCallback((productId: string) => {
     setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
-  };
+  }, []);
 
-  // Wishlist Operations
-  const handleToggleWishlist = (product: Product) => {
+  // Wishlist Operations Memoized
+  const handleToggleWishlist = useCallback((product: Product) => {
     setWishlistIds((prev) =>
       prev.includes(product.id)
         ? prev.filter((id) => id !== product.id)
         : [...prev, product.id]
     );
-  };
+  }, []);
+
+  const handleQuickView = useCallback((product: Product) => {
+    setQuickViewProduct(product);
+  }, []);
 
   // Subtotal & Calculations with Dynamic Campaign Percentage
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const cartSubtotal = cartItems.reduce(
+  const cartCount = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
+  const cartSubtotal = useMemo(() => cartItems.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
     0
-  );
+  ), [cartItems]);
 
-  const matchedCampaign = campaignsList.find((c) => c.code.toUpperCase() === couponCode.toUpperCase());
+  const matchedCampaign = useMemo(() => campaignsList.find((c) => c.code.toUpperCase() === couponCode.toUpperCase()), [campaignsList, couponCode]);
   const activeDiscountRate = matchedCampaign ? matchedCampaign.discountPercent / 100 : 0.10;
   const discountAmount = cartSubtotal > 0 ? cartSubtotal * activeDiscountRate : 0;
 
   // Checkout trigger
-  const handleProceedToCheckout = () => {
+  const handleProceedToCheckout = useCallback(() => {
     setIsCartOpen(false);
     setIsCheckoutOpen(true);
-  };
+  }, []);
 
-  const handleCompleteOrder = (order: OrderState) => {
+  const handleCompleteOrder = useCallback((order: OrderState) => {
     setIsCheckoutOpen(false);
     setCartItems([]);
     setCompletedOrder(order);
-  };
+  }, []);
+
+  const handleApplyBestOffer = useCallback((code: string) => {
+    setCouponCode(code);
+    setIsCartOpen(true);
+  }, []);
 
   return (
     <div
@@ -450,9 +463,7 @@ export function App() {
         cartCount={cartCount}
         wishlistCount={wishlistIds.length}
         onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => {
-          setSelectedCategory('All');
-        }}
+        onOpenWishlist={() => setSelectedCategory('All')}
         cartSubtotal={cartSubtotal}
         theme={theme}
         onToggleTheme={handleToggleTheme}
@@ -559,8 +570,8 @@ export function App() {
                     <ProductCard
                       key={product.id}
                       product={product}
-                      onAddToCart={(p) => handleAddToCart(p, 1)}
-                      onQuickView={(p) => setQuickViewProduct(p)}
+                      onAddToCart={handleAddToCart}
+                      onQuickView={handleQuickView}
                       isWishlisted={wishlistIds.includes(product.id)}
                       onToggleWishlist={handleToggleWishlist}
                       theme={theme}
@@ -614,20 +625,10 @@ export function App() {
       {activeView === 'store' && (
         <BestOfferNotification
           campaign={bestOfferCampaign}
-          onApplyCoupon={(code) => {
-            setCouponCode(code);
-            setIsCartOpen(true);
-          }}
+          onApplyCoupon={handleApplyBestOffer}
           theme={theme}
         />
       )}
-
-      {/* Dev Mode Floating View Switcher */}
-      <DevViewSwitcher
-        activeView={activeView}
-        onSwitchView={setActiveView}
-        theme={theme}
-      />
 
       {/* Footer */}
       <Footer theme={theme} />
@@ -636,9 +637,7 @@ export function App() {
       <ProductQuickView
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
-        onAddToCart={(p, qty, color) => {
-          handleAddToCart(p, qty, color);
-        }}
+        onAddToCart={handleAddToCart}
         isWishlisted={quickViewProduct ? wishlistIds.includes(quickViewProduct.id) : false}
         onToggleWishlist={handleToggleWishlist}
         theme={theme}

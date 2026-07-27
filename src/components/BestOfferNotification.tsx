@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Flame, X, Tag, Check, ArrowRight } from 'lucide-react';
 import type { DiscountCampaign, ThemeMode } from '../types/store';
 
@@ -8,7 +8,7 @@ interface BestOfferNotificationProps {
   theme?: ThemeMode;
 }
 
-export const BestOfferNotification: React.FC<BestOfferNotificationProps> = ({
+export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(({
   campaign,
   onApplyCoupon,
   theme = 'dark',
@@ -30,7 +30,7 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = ({
   return (
     <div className="fixed bottom-6 right-6 z-40 max-w-sm w-full animate-in slide-in-from-bottom-5 duration-500">
       <div
-        className={`relative p-5 rounded-3xl border shadow-2xl space-y-3 overflow-hidden backdrop-blur-xl transition-all duration-300 ${
+        className={`relative p-5 rounded-3xl border shadow-2xl space-y-3 overflow-hidden backdrop-blur-xl transition-all duration-300 transform-gpu ${
           isDark
             ? 'bg-slate-900/95 border-amber-500/40 text-white shadow-amber-500/10'
             : 'bg-white/95 border-amber-400 text-slate-900 shadow-xl'
@@ -107,4 +107,6 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = ({
       </div>
     </div>
   );
-};
+});
+
+BestOfferNotification.displayName = 'BestOfferNotification';
