@@ -7,7 +7,7 @@ import {
   Sparkles,
   Sun,
   Moon,
-  Smartphone,
+  Download,
   Tag,
 } from 'lucide-react';
 import type { DiscountCampaign, ProductCategory, ThemeMode } from '../types/store';
@@ -178,18 +178,18 @@ export const Header: React.FC<HeaderProps> = memo(({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            {/* Install PWA App Button */}
+            {/* Install PWA App Download Button */}
             <button
               type="button"
               onClick={onOpenInstallPwa}
-              className={`p-2.5 sm:px-3 sm:py-2 rounded-xl border transition flex items-center gap-1.5 text-xs font-semibold ${
+              className={`p-2.5 sm:px-3 sm:py-2 rounded-xl border transition flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${
                 isDark
                   ? 'bg-cyan-950/60 hover:bg-cyan-900/80 border-cyan-800/80 text-cyan-300'
                   : 'bg-cyan-50 hover:bg-cyan-100 border-cyan-300 text-cyan-800'
               }`}
-              title="Install Fluka Web App"
+              title="Install / Download Fluka Web App"
             >
-              <Smartphone className="w-4 h-4 text-cyan-500" />
+              <Download className="w-4 h-4 text-cyan-500" />
               <span className="hidden lg:inline">Install App</span>
             </button>
 
@@ -197,7 +197,7 @@ export const Header: React.FC<HeaderProps> = memo(({
             <button
               type="button"
               onClick={onToggleTheme}
-              className={`p-2.5 rounded-xl border transition flex items-center justify-center ${
+              className={`p-2.5 rounded-xl border transition flex items-center justify-center cursor-pointer ${
                 isDark
                   ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-amber-400'
                   : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
@@ -216,7 +216,7 @@ export const Header: React.FC<HeaderProps> = memo(({
               <button
                 type="button"
                 onClick={onOpenWishlist}
-                className={`relative p-2.5 rounded-xl border transition flex items-center gap-2 ${
+                className={`relative p-2.5 rounded-xl border transition flex items-center gap-2 cursor-pointer ${
                   isDark
                     ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border-slate-800'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
@@ -296,7 +296,7 @@ export const Header: React.FC<HeaderProps> = memo(({
                 key={category}
                 type="button"
                 onClick={() => onSelectCategory(category)}
-                className={`px-4 py-1.5 rounded-xl font-medium transition whitespace-nowrap text-xs ${
+                className={`px-4 py-1.5 rounded-xl font-medium transition whitespace-nowrap text-xs cursor-pointer ${
                   selectedCategory === category
                     ? isDark
                       ? 'bg-slate-100 text-slate-950 font-bold shadow-md'
