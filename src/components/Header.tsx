@@ -19,6 +19,7 @@ interface HeaderProps {
   wishlistCount: number;
   onOpenCart: () => void;
   onOpenWishlist: () => void;
+  onOpenSideNav: () => void;
   cartSubtotal: number;
   theme: ThemeMode;
   onToggleTheme: () => void;
@@ -26,7 +27,6 @@ interface HeaderProps {
   activeView: 'store' | 'vendor' | 'admin';
   onSwitchView: (view: 'store' | 'vendor' | 'admin') => void;
   activeCampaigns?: DiscountCampaign[];
-  onOpenSideNav: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = memo(({
@@ -36,13 +36,11 @@ export const Header: React.FC<HeaderProps> = memo(({
   onSelectCategory,
   cartCount,
   onOpenCart,
+  onOpenSideNav,
   cartSubtotal,
   theme,
-  onOpenInstallPwa,
-  activeView,
   onSwitchView,
   activeCampaigns = [],
-  onOpenSideNav,
 }) => {
   const isDark = theme === 'dark';
 

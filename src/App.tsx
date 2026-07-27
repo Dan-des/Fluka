@@ -332,7 +332,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('All');
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'rating'>('featured');
   
-  // Cart, Wishlist & Side Navigation Drawer State
+  // Cart, Wishlist & SideNav Drawer States at Root Level
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
@@ -482,6 +482,7 @@ export function App() {
         wishlistCount={wishlistIds.length}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
+        onOpenSideNav={() => setIsSideNavOpen(true)}
         cartSubtotal={cartSubtotal}
         theme={theme}
         onToggleTheme={handleToggleTheme}
@@ -489,7 +490,6 @@ export function App() {
         activeView={activeView}
         onSwitchView={setActiveView}
         activeCampaigns={activeCampaigns}
-        onOpenSideNav={() => setIsSideNavOpen(true)}
       />
 
       {/* Main Container */}
@@ -691,7 +691,7 @@ export function App() {
         theme={theme}
       />
 
-      {/* Global Root-Level Side Navigation Drawer (Unconstrained by Header Stacking Context) */}
+      {/* Root-Level Side Navigation Drawer (Full-Site Interactivity & Depth Blur) */}
       <SideNavDrawer
         isOpen={isSideNavOpen}
         onClose={() => setIsSideNavOpen(false)}
