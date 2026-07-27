@@ -56,16 +56,17 @@ export const SideNavDrawer: React.FC<SideNavDrawerProps> = memo(({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden animate-in fade-in duration-300">
-      {/* Backdrop overlay */}
+    <div className="fixed inset-0 z-[100] overflow-hidden animate-in fade-in duration-300">
+      {/* Rich Depth of Field Blur Backdrop Overlay */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity duration-300"
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 left-0 max-w-full flex pr-10">
+      {/* Slide-Over Right Drawer Panel */}
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div
-          className={`w-screen max-w-xs sm:max-w-sm border-r shadow-2xl flex flex-col justify-between transition-transform duration-300 ${
+          className={`w-screen max-w-xs sm:max-w-sm border-l shadow-2xl flex flex-col justify-between transition-transform duration-300 animate-in slide-in-from-right duration-300 ${
             isDark
               ? 'bg-slate-950 border-slate-800 text-slate-100'
               : 'bg-white border-slate-200 text-slate-900'
