@@ -75,7 +75,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopClick, theme = 'da
 
         {/* Right Column Featured Mockup Image */}
         <div className="lg:col-span-5 relative flex justify-center">
-          <div className="relative group">
+          <div className="relative group w-full">
             {/* Glowing border ring */}
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 to-violet-600 opacity-30 group-hover:opacity-50 blur transition duration-500" />
             <div
@@ -83,11 +83,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopClick, theme = 'da
                 isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}
             >
-              <img
-                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
-                alt="Fluka SoundPulse Pro"
-                className="w-full h-64 sm:h-72 object-cover rounded-xl transform group-hover:scale-105 transition duration-500"
-              />
+              <div className={`w-full h-64 sm:h-72 rounded-xl overflow-hidden ${isDark ? 'bg-slate-900' : 'bg-slate-200'}`}>
+                <img
+                  src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
+                  alt="Fluka SoundPulse Pro"
+                  loading="eager"
+                  decoding="async"
+                  className="w-full h-full object-cover rounded-xl transform group-hover:scale-105 transition duration-500"
+                />
+              </div>
               <div
                 className={`absolute bottom-6 left-6 right-6 backdrop-blur-md p-3.5 rounded-xl border flex items-center justify-between shadow-xl ${
                   isDark

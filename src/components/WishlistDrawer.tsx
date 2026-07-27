@@ -107,12 +107,15 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = memo(({
                     isDark ? 'bg-slate-900/70 border-slate-800/80 hover:border-slate-700' : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    loading="lazy"
-                    className="w-16 h-16 object-cover rounded-xl bg-slate-950 border border-slate-800 shrink-0"
-                  />
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      loading="eager"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
                   <div className="flex-1 min-w-0 space-y-1">
                     <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">

@@ -77,16 +77,6 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
 
   return (
     <div className="fixed bottom-6 right-6 z-40 max-w-sm w-full animate-in slide-in-from-bottom-5 duration-500">
-      <style>{`
-        @keyframes timer-shrink {
-          0% { width: 100%; }
-          100% { width: 0%; }
-        }
-        .animate-progress-line {
-          animation: timer-shrink 10s linear forwards;
-        }
-      `}</style>
-
       <div
         className={`relative p-5 rounded-3xl border shadow-2xl space-y-3 overflow-hidden backdrop-blur-xl transition-all duration-300 transform-gpu ${
           isDark
@@ -172,6 +162,11 @@ export const BestOfferNotification: React.FC<BestOfferNotificationProps> = memo(
         </div>
       </div>
     </div>
+  );
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.campaign?.id === nextProps.campaign?.id &&
+    prevProps.theme === nextProps.theme
   );
 });
 

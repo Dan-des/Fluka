@@ -44,7 +44,7 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
   return (
     <div
       onClick={() => onQuickView(product)}
-      className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer relative transform-gpu cv-auto ${
+      className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer relative transform-gpu ${
         product.isFlagged
           ? 'border-rose-500/80 ring-1 ring-rose-500/40'
           : isDark
@@ -52,12 +52,12 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({
           : 'bg-white border-slate-200 text-slate-900 shadow-sm hover:shadow-xl hover:border-slate-300'
       }`}
     >
-      {/* Product Image Container */}
-      <div className={`relative aspect-square w-full overflow-hidden ${isDark ? 'bg-slate-950' : 'bg-slate-100'}`}>
+      {/* Product Image Container with Reserved Aspect Square & Neutral Skeleton Background */}
+      <div className={`relative aspect-square w-full overflow-hidden shrink-0 ${isDark ? 'bg-slate-950 border-b border-slate-800/60' : 'bg-slate-200 border-b border-slate-100'}`}>
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          loading="eager"
           decoding="async"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform"
         />
