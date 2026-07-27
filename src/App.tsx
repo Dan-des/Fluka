@@ -4,6 +4,7 @@ import { HeroBanner } from './components/HeroBanner';
 import { ProductCard } from './components/ProductCard';
 import { ProductQuickView } from './components/ProductQuickView';
 import { CartDrawer } from './components/CartDrawer';
+import { WishlistDrawer } from './components/WishlistDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { OrderSuccessModal } from './components/OrderSuccessModal';
 import { InstallPwaModal } from './components/InstallPwaModal';
@@ -333,6 +334,7 @@ export function App() {
   // Cart & Wishlist start clean from 0 for first-time visitors
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -368,6 +370,11 @@ export function App() {
       return 0; // featured
     });
   }, [productsList, searchQuery, selectedCategory, sortBy]);
+
+  // Wishlist Favorited Products List
+  const wishlistProducts = useMemo(() => {
+    return productsList.filter((p) => wishlistIds.includes(p.id));
+  }, [productsList, wishlistIds]);
 
   // Cart Operations Memoized
   const handleAddToCart = useCallback((
@@ -416,6 +423,15 @@ export function App() {
     );
   }, []);
 
+  const handleRemoveWishlistItem = useCallback((product: Product) => {
+    setWishlistIds((prev) => prev.filter((id) => id !== product.id));
+  }, []);
+
+  const handleMoveWishlistToCart = useCallback((product: Product) => {
+    handleAddToCart(product, 1);
+    setWishlistIds((prev) => prev.filter((id) => id !== product.id));
+  }, [handleAddToCart]);
+
   const handleQuickView = useCallback((product: Product) => {
     setQuickViewProduct(product);
   }, []);
@@ -463,7 +479,7 @@ export function App() {
         cartCount={cartCount}
         wishlistCount={wishlistIds.length}
         onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => setSelectedCategory('All')}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
         cartSubtotal={cartSubtotal}
         theme={theme}
         onToggleTheme={handleToggleTheme}
@@ -643,7 +659,7 @@ export function App() {
         theme={theme}
       />
 
-      {/* Sliding Cart Drawer with Dynamic Campaign Discounting */}
+      {/* Sliding Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -654,6 +670,16 @@ export function App() {
         couponCode={couponCode}
         onApplyCoupon={setCouponCode}
         discountAmount={discountAmount}
+        theme={theme}
+      />
+
+      {/* Interactive Wishlist Drawer */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        items={wishlistProducts}
+        onRemoveItem={handleRemoveWishlistItem}
+        onMoveToCart={handleMoveWishlistToCart}
         theme={theme}
       />
 
